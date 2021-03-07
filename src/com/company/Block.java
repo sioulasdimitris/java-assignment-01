@@ -20,9 +20,7 @@ public class Block {
     }
 
     public String mineBlock(int prefix){
-        System.out.println(new char[prefix]);
         String prefixString = new String(new char[prefix]).replace('\0','0');
-        System.out.println(prefixString);
         while (!hash.substring(0,prefix).equals(prefixString)){
             nonce++;
             hash = calculateBlockHash();
@@ -55,6 +53,14 @@ public class Block {
             buffer.append(String.format("%02x",b));
 
         return buffer.toString();
+    }
+
+    public String getData(){
+        return data;
+    }
+
+    public long getTimeStamp(){
+        return this.timeStamp;
     }
 
 }
