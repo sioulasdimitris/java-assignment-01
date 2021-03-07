@@ -6,9 +6,8 @@ import java.util.List;
 public class Main {
     public static List<Block> blockChain = new ArrayList<>();
     public static int prefix = 2;
-    private static ArrayList<MyThread> threadsData = new ArrayList<MyThread>();
-    private static Thread[] threadsArray;
-    private String message;
+    public static ArrayList<MyThread> threadsData = new ArrayList<MyThread>();
+    public static Thread[] threadsArray;
 
 
     public static void main(String[] args) {
@@ -18,21 +17,15 @@ public class Main {
         fu.readTimingsFileMethod();
         //fu.printThreadsWithTimingsHelperMethod();
 
-        threadsData = fu.getMyThreads();
-        threadsArray = new Thread[threadsData.size()];
+        threadsData = fu.getMyThreads();//array for thread data
+        threadsArray = new Thread[threadsData.size()];//create an array of threads
 
 
         for(int i=0;i<threadsData.size();i++){
-            MyRunnable runnableInstance = new MyRunnable();
-            threadsArray[i] = new Thread(runnableInstance);
-
+            threadsArray[i] = new Thread(new MyRunnable(threadsData.get(i).getThreadName(),threadsData.get(i).getThreadTime()),threadsData.get(i).getThreadName());
             threadsArray[i].start();
 
-            try {
-                threadsArray[i].join(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
         }
 
 

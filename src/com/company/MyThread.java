@@ -5,20 +5,10 @@ import java.util.ArrayList;
 public class MyThread {
     private String threadName;
     private int threadTime;
-    private boolean isFinished;
     private ArrayList<String> waitFor = new ArrayList<String>();
 
     public MyThread(String threadName){
         this.threadName = threadName;
-        this.isFinished = false;
-    }
-
-    public void setIsFinished(){
-        this.isFinished = true;
-    }
-
-    public boolean getIsFinished(){
-        return isFinished;
     }
 
     public String getThreadName() {
