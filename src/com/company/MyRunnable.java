@@ -47,6 +47,7 @@ public class MyRunnable implements Runnable{
                 waitFor.join();
             }
             System.out.println(threadName+" started");
+            Main.dynamicShapes.addNewCircle(threadName);//add new circle shape
             startTime = System.currentTimeMillis();
             Thread.sleep(threadSleepTime);
 
