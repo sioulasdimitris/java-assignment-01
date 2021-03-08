@@ -8,7 +8,7 @@ import java.sql.Statement;
 public class SQLiteHelper {
     private static SQLiteHelper sqLiteHelper = new SQLiteHelper();//singleton design pattern - instance will be created at load time
     private static Connection connection;
-    private String jdbcUrl = "jdbc:sqlite:C:/my_workspaces/intellij_workspace/Ergasia01/res/blocksdb.db";
+    private String jdbcUrl = "jdbc:sqlite:"+System.getProperty("user.dir")+"/res/blocksdb.db";//database path
 
     public void setConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
@@ -28,5 +28,6 @@ public class SQLiteHelper {
     public static SQLiteHelper getSQLiteHelper(){
         return sqLiteHelper;
     }
+
 
 }

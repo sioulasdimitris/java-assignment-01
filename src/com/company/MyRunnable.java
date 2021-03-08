@@ -7,8 +7,8 @@ import java.util.Date;
 public class MyRunnable implements Runnable{
     private static List<Block> blockChain = Collections.synchronizedList(new ArrayList());
     private String threadName;
-    private ArrayList<String> threadsNamesToWait = new ArrayList<String>();
-    private ArrayList<Thread> threadsToWait = new ArrayList<Thread>();
+    private ArrayList<String> threadsNamesToWait = new ArrayList<String>();//string arraylist for keeping for each thread which threadNames needs to wait
+    private ArrayList<Thread> threadsToWait = new ArrayList<Thread>();//keeping all the threads each thread needs to wait
     private int threadSleepTime;
     private long startTime;
     private long callTime;
@@ -23,7 +23,7 @@ public class MyRunnable implements Runnable{
 
         for(MyThread thread : Main.threadsData){//get the name of the threads this thread needs to wait
             if(thread.getThreadName() != null && thread.getThreadName().equals(threadName)){
-                threadsNamesToWait = thread.getWaitFor();
+                threadsNamesToWait = thread.getWaitFor();//thread names arrayList
             }
         }
 
@@ -31,12 +31,11 @@ public class MyRunnable implements Runnable{
             for(Thread thread : Main.threadsArray){
                 if(thread != null){
                     if(thread.getName() != null && thread.getName().equals(thName)){
-                        threadsToWait.add(thread);
+                        threadsToWait.add(thread);//threads to wait arrayList
                     }
                 }
             }
         }
-
     }
 
     @Override
@@ -47,7 +46,13 @@ public class MyRunnable implements Runnable{
                 waitFor.join();
             }
             System.out.println(threadName+" started");
-            Main.dynamicShapes.addNewCircle(threadName);//add new circle shape
+
+            //circles gui
+            synchronized(Main.dynamicShapes){
+                Main.dynamicShapes.addNewCircle(threadName,new Date().getTime(),threadsNamesToWait);//add new circle shape when a new thread is started
+
+            }
+
             startTime = System.currentTimeMillis();
             Thread.sleep(threadSleepTime);
 

@@ -1,14 +1,12 @@
 package com.company;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
     public static int prefix = 2;
-    public static ArrayList<MyThread> threadsData = new ArrayList<MyThread>();
-    public static Thread[] threadsArray;
+    public static ArrayList<MyThread> threadsData = new ArrayList<MyThread>();//arraylist for keep threads data after reading the txt files
+    public static Thread[] threadsArray;//keeping all threads
     public static DynamicShapes dynamicShapes;
 
     public static void main(String[] args) {
@@ -26,11 +24,9 @@ public class Main {
             threadsArray[i] = new Thread(new MyRunnable(threadsData.get(i).getThreadName(),threadsData.get(i).getThreadTime()),threadsData.get(i).getThreadName());
         }
 
-
         //GUI
         JFrame frame = new JFrame();
-
-        dynamicShapes = new DynamicShapes();
+        dynamicShapes = DynamicShapes.getDynamicShapes();
         frame.add(dynamicShapes);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800,700);
@@ -40,7 +36,6 @@ public class Main {
         for(int i=0;i<threadsData.size();i++){
             threadsArray[i].start();
         }
-
 
         System.out.println("MAIN finished...");
     }
