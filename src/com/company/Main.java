@@ -8,8 +8,8 @@ public class Main {
     public static ArrayList<MyThread> threadsData = new ArrayList<MyThread>();
     public static Thread[] threadsArray;
 
-
     public static void main(String[] args) {
+        System.out.println("MAIN started...");
         FileUtils fu = new FileUtils();
         fu.readPrecedenceFile();
         //fu.printThreadsHelperMethod();
@@ -19,21 +19,12 @@ public class Main {
         threadsData = fu.getMyThreads();//array for thread data
         threadsArray = new Thread[threadsData.size()];//create an array of threads
 
-
         for(int i=0;i<threadsData.size();i++){
             threadsArray[i] = new Thread(new MyRunnable(threadsData.get(i).getThreadName(),threadsData.get(i).getThreadTime()),threadsData.get(i).getThreadName());
             threadsArray[i].start();
         }
 
-
-
-
-
-
-
-
-
-        System.out.println("MAIN end...");
+        System.out.println("MAIN finished...");
     }
 
 }

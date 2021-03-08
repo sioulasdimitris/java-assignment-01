@@ -1,13 +1,11 @@
 package com.company;
 import java.lang.Thread;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.List;
-
 
 public class MyRunnable implements Runnable{
-    public static List<Block> blockChain = new ArrayList<>();
+    private static List<Block> blockChain = Collections.synchronizedList(new ArrayList());
     private String threadName;
     private ArrayList<String> threadsNamesToWait = new ArrayList<String>();
     private ArrayList<Thread> threadsToWait = new ArrayList<Thread>();
@@ -60,39 +58,42 @@ public class MyRunnable implements Runnable{
             for(String s :threadsNamesToWait){
                 threadNameDependencies += s+" ";
             }
-            data = threadName+" "+totalDuration+" "+threadNameDependencies+" "+endTime;
+            data = threadName+" "+totalDuration+" "+threadNameDependencies+""+endTime;
             System.out.println(threadName+" finished, "+"waited idle for "+waitedIdleTime+", process time: "+totalDuration);
 
-            //blockchain
-            Block currentBlock;
-            if(blockChain.size()==0){
-                currentBlock = new Block("0",data,new Date().getTime());
-            } else {
-                currentBlock = new Block(blockChain.get(blockChain.size()-1).getHash(),data,new Date().getTime());
-            }
-            currentBlock.mineBlock(Main.prefix);
-            blockChain.add(currentBlock);
-
-            //sqlite
-            String jdbcUrl = "jdbc:sqlite:C:/my_workspaces/intellij_workspace/Ergasia01/res/blocksdb.db";
-            try {
-                Class.forName("org.sqlite.JDBC");
-                Connection connection = DriverManager.getConnection(jdbcUrl);
-                String sql = "INSERT INTO blocks(hash, previoushash, data, timeStamp) values ('"+currentBlock.getHash()+"','"+currentBlock.getPreviousHash()+"','"+currentBlock.getData()+"','"+currentBlock.getTimeStamp()+"')";
-
-                Statement statement = connection.createStatement();
-                statement.executeUpdate(sql);
-
-
-
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            synchronized(blockChain) {
+                //blockchain
+                if(blockChain.size()==0){
+                    addToBlockChain(new Block("0",data,new Date().getTime()));
+                } else {
+                    addToBlockChain(new Block(blockChain.get(blockChain.size()-1).getHash(),data,new Date().getTime()));
+                }
+                //sqlite
+                addToDatabase();
             }
 
         } catch (InterruptedException e){
             e.printStackTrace();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+    }
+
+    private void addToBlockChain(Block block) {
+            block.mineBlock(Main.prefix);
+            blockChain.add(block);
+            //System.out.println("BlockChain is valid?:"+ChainValidator.isChainValid(Main.prefix,blockChain));
+    }
+
+    synchronized void addToDatabase() throws SQLException, ClassNotFoundException {
+        SQLiteHelper.getSQLiteHelper().setConnection();
+        SQLiteHelper.getSQLiteHelper().insertToDb(blockChain.get(blockChain.size()-1));
+        for(Thread thread : Main.threadsArray){
+            if(thread.isAlive()) break;
+            SQLiteHelper.getSQLiteHelper().closeConnection();
+        }
+
     }
 }

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class FileUtils {
-    private String precedenceFile = "\\p_precedence.txt";
-    private String timingsFile = "\\p_timings.txt";
+    private String precedenceFile = "p_precedence.txt"; //C:\my_workspaces\intellij_workspace\Ergasia01\out\production\Ergasia01\p_precedence.txt
+    private String timingsFile = "p_timings.txt"; //C:\my_workspaces\intellij_workspace\Ergasia01\out\production\Ergasia01\p_timings.txt
     private ArrayList<MyThread> myThreads = new ArrayList<MyThread>();
     private MyThread myThread;
 
@@ -17,7 +17,8 @@ public class FileUtils {
     //this method reads the precendence file, creates the thread objects(name,waitfor), adds each thread in the arraylist
     public void readPrecedenceFile(){
         try {
-            File myObj = new File(getDesktopPath()+precedenceFile);
+            ;
+            File myObj = new File(getResourcesPath(precedenceFile));
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
@@ -41,7 +42,7 @@ public class FileUtils {
     //this method reads the timings file and sets the time to each thread
     public void readTimingsFileMethod(){
         try {
-            File myObj = new File(getDesktopPath()+timingsFile);
+            File myObj = new File(getResourcesPath(timingsFile));
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
@@ -95,8 +96,13 @@ public class FileUtils {
         return myThreads;
     }
 
-    public static String getDesktopPath(){
+    public String getDesktopPath(){
         return new File(System.getProperty("user.home"), "Desktop").getPath();
     }
 
+    public String getResourcesPath(String filename){
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource(filename).getFile());
+        return file.getAbsolutePath();
+    }
 }
